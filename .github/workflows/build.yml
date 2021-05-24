@@ -13,18 +13,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Build base image
+      - name: Build images
         run: |
           Get-Content Dockerfile.msys2-base | docker build -t ghcr.io/lazka/msys2-base:ltsc2016 -
-
-      - name: Build mingw image
-        run: |
-          Get-Content Dockerfile.msys2-mingw | docker build -t ghcr.io/lazka/msys2-mingw:ltsc2016 -
+          Get-Content Dockerfile.msys2-mingw-base | docker build -t ghcr.io/lazka/msys2-mingw-base:ltsc2016 -
+          Get-Content Dockerfile.msys2-mingw32 | docker build -t ghcr.io/lazka/msys2-mingw32:ltsc2016 -
+          Get-Content Dockerfile.msys2-mingw64 | docker build -t ghcr.io/lazka/msys2-mingw64:ltsc2016 -
 
       - name: Test
         run: |
-          docker run ghcr.io/lazka/msys2-base:ltsc2016 C:\msys64\usr\bin\bash.exe -lc "pacman --version"
-          docker run ghcr.io/lazka/msys2-mingw:ltsc2016 C:\msys64\usr\bin\bash.exe -lc "pacman --version"
+          docker run ghcr.io/lazka/msys2-mingw32:ltsc2016 C:\msys64\usr\bin\bash.exe -lc "pacman --version"
+          docker run ghcr.io/lazka/msys2-mingw64:ltsc2016 C:\msys64\usr\bin\bash.exe -lc "pacman --version"
 
       - name: Log in
         if: github.ref == 'refs/heads/main'
@@ -38,4 +37,6 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           docker push ghcr.io/lazka/msys2-base:ltsc2016
-          docker push ghcr.io/lazka/msys2-mingw:ltsc2016
+          docker push ghcr.io/lazka/msys2-mingw-base:ltsc2016
+          docker push ghcr.io/lazka/msys2-mingw32:ltsc2016
+          docker push ghcr.io/lazka/msys2-mingw64:ltsc2016
