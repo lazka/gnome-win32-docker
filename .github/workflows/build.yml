@@ -21,6 +21,14 @@ jobs:
         run: |
           docker run ghcr.io/lazka/msys2-base:ltsc2016 C:\msys64\usr\bin\bash.exe -lc "pacman --version"
 
+      - name: Log in
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "$TOKEN" | docker login ghcr.io --username "$USERNAME" --password-stdin
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          USERNAME: ${{ github.actor }}
+
       - name: Deploy image
         if: github.ref == 'refs/heads/main'
         run: |
