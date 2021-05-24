@@ -6,8 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-docker:
-
+  build-msys2:
     runs-on: windows-2016
     steps:
       - name: Checkout code
@@ -19,13 +18,11 @@ jobs:
           Get-Content Dockerfile.msys2-mingw-base | docker build -t ghcr.io/lazka/msys2-mingw-base:latest -
           Get-Content Dockerfile.msys2-mingw32 | docker build -t ghcr.io/lazka/msys2-mingw32:latest -
           Get-Content Dockerfile.msys2-mingw64 | docker build -t ghcr.io/lazka/msys2-mingw64:latest -
-          Get-Content Dockerfile.vs2017 | docker build -t ghcr.io/lazka/vs2017:latest -
 
       - name: Test
         run: |
           docker run ghcr.io/lazka/msys2-mingw32:latest C:\msys64\usr\bin\bash.exe -lc "pacman --version"
           docker run ghcr.io/lazka/msys2-mingw64:latest C:\msys64\usr\bin\bash.exe -lc "pacman --version"
-          docker run ghcr.io/lazka/vs2017:lates 'C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat' x64
 
       - name: Log in
         if: github.ref == 'refs/heads/main'
@@ -42,4 +39,30 @@ jobs:
           docker push ghcr.io/lazka/msys2-mingw-base:latest
           docker push ghcr.io/lazka/msys2-mingw32:latest
           docker push ghcr.io/lazka/msys2-mingw64:latest
+
+  build-vs2017:
+    runs-on: windows-2016
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build images
+        run: |
+          Get-Content Dockerfile.vs2017 | docker build -t ghcr.io/lazka/vs2017:latest -
+
+      - name: Test
+        run: |
+          docker run ghcr.io/lazka/vs2017:lates 'C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat' x64
+
+      - name: Log in
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "$env:TOKEN" | docker login ghcr.io --username "$env:USERNAME" --password-stdin
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          USERNAME: ${{ github.actor }}
+
+      - name: Deploy images
+        if: github.ref == 'refs/heads/main'
+        run: |
           docker push ghcr.io/lazka/vs2017:latest
