@@ -1,0 +1,27 @@
+name: 'build'
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-docker:
+
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build image
+        run: |
+          Get-Content Dockerfile | docker build -t ghcr.io/lazka/msys2-base:latest -
+
+      - name: Test
+        run: |
+          docker run ghcr.io/lazka/msys2-base:latest C:\msys64\usr\bin\bash.exe -lc "pacman --version"
+
+      - name: Deploy image
+        if: github.ref == 'refs/heads/master'
+        run: |
+          docker push ghcr.io/lazka/msys2-base:latest
