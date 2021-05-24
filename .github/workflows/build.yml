@@ -15,13 +15,13 @@ jobs:
 
       - name: Build image
         run: |
-          Get-Content Dockerfile | docker build -t ghcr.io/lazka/msys2-base:latest -
+          Get-Content Dockerfile | docker build -t ghcr.io/lazka/msys2-base:ltsc2016 -
 
       - name: Test
         run: |
-          docker run ghcr.io/lazka/msys2-base:latest C:\msys64\usr\bin\bash.exe -lc "pacman --version"
+          docker run ghcr.io/lazka/msys2-base:ltsc2016 C:\msys64\usr\bin\bash.exe -lc "pacman --version"
 
       - name: Deploy image
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main'
         run: |
-          docker push ghcr.io/lazka/msys2-base:latest
+          docker push ghcr.io/lazka/msys2-base:ltsc2016
