@@ -24,7 +24,7 @@ jobs:
       - name: Log in
         if: github.ref == 'refs/heads/main'
         run: |
-          echo "$TOKEN" | docker login ghcr.io --username "$USERNAME" --password-stdin
+          echo "$env:TOKEN" | docker login ghcr.io --username "$env:USERNAME" --password-stdin
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
           USERNAME: ${{ github.actor }}
