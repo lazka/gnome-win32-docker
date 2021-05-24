@@ -4,5 +4,5 @@ RUN powershell -Command \
   $ErrorActionPreference = 'Stop'; \
   $ProgressPreference = 'SilentlyContinue'; \
   function msys() { C:\msys64\usr\bin\bash.exe @('-lc') + @Args; } \
-  msys '-S --needed --noconfirm base-devel mingw-w64-i686-toolchain mingw-w64-x86_64-toolchain git'; \
+  msys 'pacman -S --needed --noconfirm base-devel mingw-w64-i686-toolchain mingw-w64-x86_64-toolchain git'; \
   msys 'pacman --noconfirm -Scc';
