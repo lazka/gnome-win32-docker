@@ -1,0 +1,26 @@
+FROM mcr.microsoft.com/windows/servercore:ltsc2016
+
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+
+# Install chocolatey
+RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; \
+  iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')); \
+  choco feature disable --name showDownloadProgress; \
+  choco feature enable --name allowGlobalConfirmation;
+
+# Install packages
+# XXX: newer dotnetfx versions hang at install time
+RUN \
+  choco install dotnetfx --version 4.6.2.0; \
+  choco install visualstudio2017buildtools --version 15.9.36.0; \
+  choco install visualstudio2017-workload-vctools --version 1.3.3;
+RUN \
+  choco install vswhere --version 2.8.4; \
+  choco install ninja --version 1.10.2; \
+  choco install git --version 2.31.1; \
+  choco install python --version 3.9.5;
+
+# Add Python "user" sciprts dir to PATH
+RUN \
+  $env:PATH=$env:APPDATA + '\Python\Python39\Scripts;' + $env:path; \
+  [Environment]::SetEnvironmentVariable('PATH', $env:PATH, [EnvironmentVariableTarget]::User);

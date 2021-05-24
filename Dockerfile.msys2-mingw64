@@ -1,8 +1,8 @@
-FROM ghcr.io/lazka/msys2-mingw-base:ltsc2016
+FROM ghcr.io/lazka/msys2-mingw-base
 
-RUN powershell -Command \
-  $ErrorActionPreference = 'Stop'; \
-  $ProgressPreference = 'SilentlyContinue'; \
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+
+RUN \
   function msys() { C:\msys64\usr\bin\bash.exe @('-lc') + @Args; } \
   msys 'pacman -S --needed --noconfirm mingw-w64-x86_64-toolchain'; \
   msys 'pacman --noconfirm -Scc';
