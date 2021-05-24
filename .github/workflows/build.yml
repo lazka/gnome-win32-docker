@@ -52,7 +52,7 @@ jobs:
 
       - name: Test
         run: |
-          docker run ghcr.io/lazka/vs2017:lates 'C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat' x64
+          docker run ghcr.io/lazka/vs2017:latest 'C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat' x64
 
       - name: Log in
         if: github.ref == 'refs/heads/main'
